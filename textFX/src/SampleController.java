@@ -15,9 +15,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Shape;
 
 /**
  * FXML Controller class
@@ -46,8 +49,15 @@ public class SampleController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         
-        p = new Poly(calcVertices(basePoint, 4, 20),basePoint);
+        p = new Poly(calcVertices(basePoint, 4, 80),basePoint);
+        p.setStroke(Color.BLACK);
+        p.setFill(Color.WHITE);
         viewPanel.getChildren().add(p);
+        l = new Line(50, 100, 160, 100);
+        viewPanel.getChildren().add(l);
+        System.out.println(p.intersects(l.getBoundsInLocal()));
+        
+      
         
     }
     public double[] calcVertices(Point basePoint,int countPoints, int size){
