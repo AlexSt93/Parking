@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="SampleController">
+   <children>
+      <SplitPane dividerPositions="0.6471571906354515" prefHeight="406.0" prefWidth="600.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="404.0" prefWidth="311.0">
+               <children>
+                  <Polygon fx:id="p1" fill="#fefeff" layoutX="192.0" layoutY="212.0" stroke="BLACK" strokeType="INSIDE">
+                    <points>
+                      <Double fx:value="-50.0" />
+                      <Double fx:value="40.0" />
+                      <Double fx:value="50.0" />
+                      <Double fx:value="40.0" />
+                      <Double fx:value="0.0" />
+                      <Double fx:value="-60.0" />
+                    </points>
+                  </Polygon>
+                  <Circle fx:id="cir1" fill="#ebebeb" layoutX="78.0" layoutY="202.0" radius="38.0" stroke="BLACK" strokeType="INSIDE" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="402.0" prefWidth="210.0">
+               <children>
+                  <TextField fx:id="tf1" layoutX="14.0" layoutY="37.0" prefHeight="30.0" prefWidth="115.0" />
+                  <Label layoutX="14.0" layoutY="14.0" text="Vert" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>
