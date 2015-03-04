@@ -52,12 +52,10 @@ public class ClientThread extends Thread {
             Server.getUserList().addUser(socket, in, out);
             Object obj;
 
-            out.writeObject(this.parking);
-            out.flush();
-            boolean parkingChanged = true;
+            //boolean parkingChanged = false;
             
             while (true) {
-                if (!parking.isEmpty() == false) {
+                if (parking.isAvaible()) {
                     out.writeObject(parking);
                     out.flush();
                     System.out.println("Parking sending");
@@ -67,7 +65,7 @@ public class ClientThread extends Thread {
                     if (obj instanceof ParkingCommand) {
                         ParkingCommand pc = (ParkingCommand) obj;
                         answPlace = pc.execute();
-                        parkingChanged = true;
+                        //parkingChanged = true;
                         out.writeObject(answPlace);
                         out.flush();
 

@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,13 +16,23 @@ import java.util.logging.Logger;
  *
  * @author Александр
  */
-public class Client implements Runnable {
+public class Client {
 
-    private Socket socket;
-    private Parking parking;
+    /**
+     * @param aParking the parking to set
+     */
+    private static Socket socket;
+    private static Thread userThread;
+    private static Thread serverAnswThread;
+    private static Parking parking;
+    private static ObjectInputStream in;
+    private static ObjectOutputStream out;
 
-    public Client(Socket socket) {
+    public Client(Socket socket) throws IOException {
         this.socket = socket;
+        in = new ObjectInputStream(socket.getInputStream());
+        out = new ObjectOutputStream(socket.getOutputStream());
+        serverAnswThread = new ServerAnswThread(this.socket);
     }
 
     public static void main(String[] args) throws IOException {
@@ -33,8 +42,7 @@ public class Client implements Runnable {
             Socket s = new Socket("localhost", Server.PORT);//CONNECT TO THE SERVER
             //s.setSoTimeout(10000);
             Client client = new Client(s);//START NEW CLIENT OBJECT
-            Thread t = new Thread(client);//INITIATE NEW THREAD
-            t.start();//START THREAD
+
         } catch (Exception noServer)//IF DIDNT CONNECT PRINT THAT THEY DIDNT
         {
             System.out.println("The server might not be up at this time.");
@@ -43,122 +51,70 @@ public class Client implements Runnable {
 
     }
 
-    @Override
-    public void run() {
-        Thread getsObjects;
-        getsObjects = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-
-                ObjectInputStream in = null;
-                try {
-                    in = new ObjectInputStream(socket.getInputStream());
-                    while (true) {
-
-                        Object obj = in.readObject();
-                        if (obj != null) {
-                            if (obj instanceof Parking) {
-                                parking = (Parking) obj;
-                                if (!parking.isEmpty() == false) {
-                                    System.out.println("Parking changed1");
-                                }
-                            } else if (obj instanceof Place) {
-                                Place place = (Place) obj;
-
-                                System.out.println(place.toString());
-                            }
-                        }
-
-                    }
-
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                } catch (ClassNotFoundException ex) {
-                    ex.printStackTrace();
-                } finally {
-                    try {
-                        in.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-
-        }
-        );
-        getsObjects.start();
-
-        Scanner inKey = new Scanner(System.in);
-        String s;
-
-        try {
-
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-
-            boolean flag = true;
-            while (flag) {
-
-                System.out.println("Enter number:");
-                System.out.println("1 - Car coming");
-                System.out.println("2 - Car is leaving");
-                System.out.println("3 - Show parking");
-                System.out.println("4 - Exit is coming");
-                System.out.println("---------");
-                int key = inKey.nextInt();
-                inKey.reset();
-                switch (key) {
-                    case 1:
-                        System.out.println("2/3?");
-
-                        int carSize = inKey.nextInt();
-                        if (carSize == 2 || carSize == 3) {
-                            //out.println("search " + car);
-                            ParkingCommand search = new SearchCommand(carSize, parking);
-                            out.writeObject(search);
-                            out.flush();
-                        }
-                        inKey.reset();
-                        break;
-                    case 2:
-                        System.out.println("Place?");
-                        String strPlace = inKey.next();
-                        ParkingCommand leave = new LeaveCommand(new Place(strPlace.substring(0, 1), Integer.parseInt(strPlace.substring(1))), parking);
-                        out.writeObject(leave);
-                        out.flush();
-
-                        inKey.reset();
-                        break;
-                    case 3:
-                        System.out.println("Parking: ");
-                        parking.showParking();
-                        inKey.reset();
-                        break;
-                    case 4:
-                        System.out.println("Exit");
-                        inKey.reset();
-                        flag = false;
-                        break;
-
-                }
-
-            }
-        } catch (IOException ex) {
-            System.err.println("I/O exception");
-            ex.printStackTrace();
-
-            //} catch (ClassNotFoundException ex) {
-            // ex.printStackTrace();
-        } finally {
-            try {
-                socket.close();
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-        }
-
+    /**
+     * @return the parking
+     */
+    public static synchronized Parking getParking() {
+        return parking;
     }
 
+    public static synchronized void setParking(Parking parking) {
+        Client.parking = parking;
+    }
+
+    /**
+     * @return the userThread
+     */
+    public synchronized static Thread getUserThread() {
+        return userThread;
+    }
+
+    /**
+     * @param aUserThread the userThread to set
+     */
+    public synchronized static void setUserThread(Thread aUserThread) {
+        userThread = aUserThread;
+    }
+
+    /**
+     * @return the serverAnswThread
+     */
+    public synchronized static Thread getServerAnswThread() {
+        return serverAnswThread;
+    }
+
+    /**
+     * @param aServerAnswThread the serverAnswThread to set
+     */
+    public synchronized static void setServerAnswThread(Thread aServerAnswThread) {
+        serverAnswThread = aServerAnswThread;
+    }
+
+    /**
+     * @return the in
+     */
+    public static synchronized ObjectInputStream getIn() {
+        return in;
+    }
+
+    /**
+     * @param in the in to set
+     */
+    public static void setIn(ObjectInputStream in) {
+        Client.in = in;
+    }
+
+    /**
+     * @return the out
+     */
+    public static ObjectOutputStream getOut() {
+        return out;
+    }
+
+    /**
+     * @param out the out to set
+     */
+    public static void setOut(ObjectOutputStream out) {
+        Client.out = out;
+    }
 }

@@ -234,10 +234,10 @@ public class Parking implements Serializable {
             System.out.print(" |"+p.getPlaceSize()+"("+p.getStatus()+")| ");
         }
     }
-    public boolean isEmpty(){
+    public boolean isAvaible(){
         boolean res = true;
-        if (places != null){
-            res = places.isEmpty();
+        if (places == null){
+            res = false;
         }
         return res;
     }
