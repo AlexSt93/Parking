@@ -15,17 +15,19 @@ public class SearchCommand implements ParkingCommand,Serializable {
 
     private int carSize;
     private Parking parking;
+    private String entryPoint;
 
-    public SearchCommand(int carSize, Parking parking) {
+    public SearchCommand(int carSize, String entryPoint, Parking parking) {
         this.carSize = carSize;
         this.parking = parking;
+        this.entryPoint = entryPoint;
     }
 
     @Override
     public Place execute() {
         Place foundPlace = new Place();
         System.out.println("SearchCommand.EXECUTE");
-        foundPlace = parking.searchPlace(carSize);
+        foundPlace = parking.searchPlace(carSize, entryPoint);
         return foundPlace;
     }
 

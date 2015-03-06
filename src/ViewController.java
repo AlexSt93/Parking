@@ -4,7 +4,9 @@
  * and open the template in the editor.
  */
 
+import java.io.ObjectOutputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,11 +25,20 @@ public class ViewController implements Initializable {
     private Rectangle AreaB;
     @FXML
     private Rectangle AreaC;
-    
+    private Parking parking;
+    private ObjectOutputStream out;
         
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        out = Client.getOut();
+        ArrayList<Place> places = parking.getPlaces().get("A");
+        for (Place p : places){
+            int position = p.getPlacePosition();
+            double areaPositionX = AreaA.getLayoutX();
+            double areaPositionY = AreaA.getLayoutY();
+            Rectangle box = new Rectangle(areaPositionX + position, areaPositionY);
+            box.setWidth(p.getPlaceSize()*10);
+        }
     }    
     
 }

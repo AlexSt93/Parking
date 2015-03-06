@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,15 +27,20 @@ public class Parking implements Serializable {
     private String adress;
     private int capacity;
     private int maxIdPlace;
+    private Map<String,String[]> areaList;
     //static final DBConnection con = DBConnection.getInsance();
 
     private static Parking instance;
 
     public Parking() {
-        this.places = getPlaces();
+        this.places = getPlacesFromDB();
+        String[] list1 =  {"A","B","C"};
+        String[] list2 =  {"C","B","A"};
+        this.areaList.put("top", list1);
+        this.areaList.put("bot", list2);
     }
 
-    private Map<String, ArrayList<Place>> getPlaces() {
+    private Map<String, ArrayList<Place>> getPlacesFromDB() {
 
         Map<String, ArrayList<Place>> places = new HashMap();
         String queryArea = "select * from place";
@@ -95,11 +101,11 @@ public class Parking implements Serializable {
         return res;
     }
 
-    public synchronized static Place searchPlace(int carSize) {
+    public synchronized static Place searchPlace(int carSize, String entryPoint) {
         Place place = new Place("!");
         String areaName = "A";
         String[] query = new String[3];
-        ArrayList<Place> placeList = instance.places.get(areaName);
+        ArrayList<Place> placeList = instance.getPlaces().get(areaName);
         int sizeFreePlaces = 0;
         int space = 0;
         int posForNewPlace = 0;
@@ -198,7 +204,7 @@ public class Parking implements Serializable {
             place = newPlace;
         }
         if (place.getId() != 0) {
-            instance.places.put(areaName, placeList);
+            instance.getPlaces().put(areaName, placeList);
             instance.parkingChanged(query);
             
         }
@@ -209,14 +215,14 @@ public class Parking implements Serializable {
     public synchronized static Place carIsLeaving(Place place) {
         Place foundPlace = new Place();
         String[] query = new String[1];
-        ArrayList<Place> placeList = instance.places.get(place.getAreaName());
+        ArrayList<Place> placeList = instance.getPlaces().get(place.getAreaName());
         for (Place p : placeList) {
             if (p.getPlacePosition() == place.getPlacePosition()) {
                 p.setStatus(0);
                 query[0] = "update place set status = 0 where id = " + p.getId();
                 instance.parkingChanged(query);
                 foundPlace = p;                
-                instance.places.put(place.getAreaName(), placeList);
+                instance.getPlaces().put(place.getAreaName(), placeList);
                 break;
             }
         }
@@ -231,7 +237,7 @@ public class Parking implements Serializable {
     }
 
     public void showParking() {
-        ArrayList<Place> placeList = this.places.get("A");
+        ArrayList<Place> placeList = this.getPlaces().get("A");
         for (Place p : placeList) {
             System.out.print(" |"+p.getPlaceSize()+"("+p.getStatus()+")| ");
         }
@@ -239,9 +245,16 @@ public class Parking implements Serializable {
     }
     public boolean isAvaible(){
         boolean res = true;
-        if (places == null){
+        if (getPlaces() == null){
             res = false;
         }
         return res;
+    }
+
+    /**
+     * @return the places
+     */
+    public Map<String, ArrayList<Place>> getPlaces() {
+        return places;
     }
 }

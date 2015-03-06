@@ -35,7 +35,7 @@ public class ServerAnswThread extends Thread {
                         Parking parking = (Parking) obj;
                         Client.setParking(parking);
                         if (Client.getUserThread() == null) {
-                            Client.setUserThread(new UserThread(socket));
+                            Client.setUserThread(new UserThread());
                         }
                     } else if (obj instanceof Place) {
                         Place place = (Place) obj;

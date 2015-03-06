@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
+import static javafx.application.Application.launch;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,10 +15,7 @@ import java.util.Scanner;
  */
 public class UserThread extends Thread {
 
-    private Socket socket;
-
-    public UserThread(Socket socket) {
-        this.socket = socket;
+    public UserThread() {
         this.start();
     }
 
@@ -26,10 +24,14 @@ public class UserThread extends Thread {
         Scanner inKey = new Scanner(System.in);
         String s;
         ObjectOutputStream out = Client.getOut();
+        launch();
 
         try {
             boolean flag = true;
             while (flag) {
+                System.out.println("Input entry point (top/bot):");
+                String entryPoint = inKey.next();                
+                inKey.reset();
 
                 System.out.println("Enter number:");
                 System.out.println("1 - Car coming");
@@ -46,7 +48,7 @@ public class UserThread extends Thread {
                         int carSize = inKey.nextInt();
                         if (carSize == 2 || carSize == 3) {
                             //out.println("search " + car);
-                            ParkingCommand search = new SearchCommand(carSize, Client.getParking());
+                            ParkingCommand search = new SearchCommand(carSize, Client.getEntryPoint(), Client.getParking());
                             out.writeObject(search);
                             out.flush();
                         }
@@ -81,7 +83,6 @@ public class UserThread extends Thread {
             ex.printStackTrace();
         } finally {
             try {
-                socket.close();
                 out.close();
 
             } catch (IOException ex) {

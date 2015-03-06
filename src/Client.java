@@ -6,6 +6,12 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Application;
+import static javafx.application.Application.launch;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -16,7 +22,21 @@ import java.util.logging.Logger;
  *
  * @author Александр
  */
-public class Client {
+public class Client{
+
+    /**
+     * @return the entryPoint
+     */
+    public static String getEntryPoint() {
+        return entryPoint;
+    }
+
+    /**
+     * @param aEntryPoint the entryPoint to set
+     */
+    public static void setEntryPoint(String aEntryPoint) {
+        entryPoint = aEntryPoint;
+    }
 
     /**
      * @param aParking the parking to set
@@ -27,12 +47,13 @@ public class Client {
     private static Parking parking;
     private static ObjectInputStream in;
     private static ObjectOutputStream out;
+    private static String entryPoint;
 
     public Client(Socket socket) throws IOException {
         this.socket = socket;
-        in = new ObjectInputStream(socket.getInputStream());
-        out = new ObjectOutputStream(socket.getOutputStream());
-        serverAnswThread = new ServerAnswThread(this.socket);
+        this.in = new ObjectInputStream(socket.getInputStream());
+        this.out = new ObjectOutputStream(socket.getOutputStream());
+        this.serverAnswThread = new ServerAnswThread(this.socket);
     }
 
     public static void main(String[] args) throws IOException {
@@ -42,6 +63,7 @@ public class Client {
             Socket s = new Socket("localhost", Server.PORT);//CONNECT TO THE SERVER
             //s.setSoTimeout(10000);
             Client client = new Client(s);//START NEW CLIENT OBJECT
+            
 
         } catch (Exception noServer)//IF DIDNT CONNECT PRINT THAT THEY DIDNT
         {
@@ -59,7 +81,7 @@ public class Client {
     }
 
     public synchronized static void setParking(Parking aParking) {
-       Client.parking = aParking;
+        Client.parking = aParking;
     }
 
     /**
@@ -117,4 +139,6 @@ public class Client {
     public static void setOut(ObjectOutputStream out) {
         Client.out = out;
     }
+
+    
 }

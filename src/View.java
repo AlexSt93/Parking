@@ -16,15 +16,14 @@ import javafx.stage.Stage;
  *
  * @author Александр
  */
-public class View extends Application{
-
+public class View extends Application{ 
+    
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("View.fxml"));
         primaryStage.setTitle("Parking");
         primaryStage.setScene(new Scene(root, primaryStage.getWidth(), primaryStage.getHeight()));
         primaryStage.show();
-        
     }
     
 }
