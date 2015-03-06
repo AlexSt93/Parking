@@ -21,7 +21,7 @@ public class Client {
     /**
      * @param aParking the parking to set
      */
-    private static Socket socket;
+    private Socket socket;
     private static Thread userThread;
     private static Thread serverAnswThread;
     private static Parking parking;
@@ -54,12 +54,12 @@ public class Client {
     /**
      * @return the parking
      */
-    public static synchronized Parking getParking() {
+    public synchronized static Parking getParking() {
         return parking;
     }
 
-    public static synchronized void setParking(Parking parking) {
-        Client.parking = parking;
+    public synchronized static void setParking(Parking aParking) {
+       Client.parking = aParking;
     }
 
     /**
@@ -73,7 +73,7 @@ public class Client {
      * @param aUserThread the userThread to set
      */
     public synchronized static void setUserThread(Thread aUserThread) {
-        userThread = aUserThread;
+        Client.userThread = aUserThread;
     }
 
     /**
@@ -87,13 +87,13 @@ public class Client {
      * @param aServerAnswThread the serverAnswThread to set
      */
     public synchronized static void setServerAnswThread(Thread aServerAnswThread) {
-        serverAnswThread = aServerAnswThread;
+        Client.serverAnswThread = aServerAnswThread;
     }
 
     /**
      * @return the in
      */
-    public static synchronized ObjectInputStream getIn() {
+    public synchronized static ObjectInputStream getIn() {
         return in;
     }
 

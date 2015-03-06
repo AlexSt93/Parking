@@ -26,31 +26,23 @@ public class ServerAnswThread extends Thread {
     public void run() {
 
         ObjectInputStream in = Client.getIn();
+        
         try {
             while (true) {
                 Object obj = in.readObject();
                 if (obj != null) {
-                    if (obj instanceof Parking) {
+                    if (obj instanceof Parking) {                        
                         Parking parking = (Parking) obj;
-                        if (parking.isAvaible()) {
-                            Client.setParking(parking);
-                            System.out.println("Parking is avaible");
-                            if (Client.getUserThread() == null) {
-                                System.out.println("User thread started");
-                                Client.setUserThread(new UserThread(socket));
-                            }
-                        } else {
-                            System.out.println("Parking is empty");
+                        Client.setParking(parking);
+                        if (Client.getUserThread() == null) {
+                            Client.setUserThread(new UserThread(socket));
                         }
                     } else if (obj instanceof Place) {
                         Place place = (Place) obj;
-
                         System.out.println(place.toString());
                     }
                 }
-
             }
-
         } catch (IOException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
@@ -59,7 +51,7 @@ public class ServerAnswThread extends Thread {
             try {
                 in.close();
             } catch (IOException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();
             }
         }
     }

@@ -22,10 +22,10 @@ import java.util.logging.Logger;
 public class Parking implements Serializable {
 
     private int idPark = 1;
-    private static Map<String, ArrayList<Place>> places;
+    private Map<String, ArrayList<Place>> places;
     private String adress;
     private int capacity;
-    private static int maxIdPlace;
+    private int maxIdPlace;
     //static final DBConnection con = DBConnection.getInsance();
 
     private static Parking instance;
@@ -71,7 +71,7 @@ public class Parking implements Serializable {
         return places;
     }
 
-    private static void parkingChanged(String[] query) {
+    private void parkingChanged(String[] query) {
         try {
             for (String q : query) {
                 if (q != null) {
@@ -99,7 +99,7 @@ public class Parking implements Serializable {
         Place place = new Place("!");
         String areaName = "A";
         String[] query = new String[3];
-        ArrayList<Place> placeList = places.get(areaName);
+        ArrayList<Place> placeList = instance.places.get(areaName);
         int sizeFreePlaces = 0;
         int space = 0;
         int posForNewPlace = 0;
@@ -159,7 +159,7 @@ public class Parking implements Serializable {
                                     + "set status = 1, "
                                     + "placeSize =" + carSize
                                     + " where id =" + p.getId() + "; ";
-                            Place newPlace = new Place(++maxIdPlace, 1, areaName, 1, placeSize - carSize, p.getPlacePosition() + carSize, 1);
+                            Place newPlace = new Place(++instance.maxIdPlace, 1, areaName, 1, placeSize - carSize, p.getPlacePosition() + carSize, 1);
                             placeList.add(placeList.indexOf(p) + 1, newPlace);
                             //placeList сортировка 
                             query[1] = "insert into place values (" + newPlace.getId() + ","
@@ -186,7 +186,7 @@ public class Parking implements Serializable {
         }
 
         if ((space + carSize) <= 24 && place.getId() == 0) {
-            Place newPlace = new Place(++maxIdPlace, 1, areaName, 1, carSize, posForNewPlace, 1);
+            Place newPlace = new Place(++instance.maxIdPlace, 1, areaName, 1, carSize, posForNewPlace, 1);
             query[0] = "insert into place values (" + newPlace.getId() + ","
                     + "1,"
                     + "'" + areaName + "'"
@@ -198,8 +198,9 @@ public class Parking implements Serializable {
             place = newPlace;
         }
         if (place.getId() != 0) {
-            places.put(areaName, placeList);
-            parkingChanged(query);
+            instance.places.put(areaName, placeList);
+            instance.parkingChanged(query);
+            
         }
         //places.put(areaName, placeList);
         return place;
@@ -208,13 +209,14 @@ public class Parking implements Serializable {
     public synchronized static Place carIsLeaving(Place place) {
         Place foundPlace = new Place();
         String[] query = new String[1];
-        ArrayList<Place> placeList = places.get(place.getAreaName());
+        ArrayList<Place> placeList = instance.places.get(place.getAreaName());
         for (Place p : placeList) {
             if (p.getPlacePosition() == place.getPlacePosition()) {
                 p.setStatus(0);
                 query[0] = "update place set status = 0 where id = " + p.getId();
-                parkingChanged(query);
-                foundPlace = p;
+                instance.parkingChanged(query);
+                foundPlace = p;                
+                instance.places.put(place.getAreaName(), placeList);
                 break;
             }
         }
@@ -229,10 +231,11 @@ public class Parking implements Serializable {
     }
 
     public void showParking() {
-        ArrayList<Place> placeList = places.get("A");
+        ArrayList<Place> placeList = this.places.get("A");
         for (Place p : placeList) {
             System.out.print(" |"+p.getPlaceSize()+"("+p.getStatus()+")| ");
         }
+        System.out.println();
     }
     public boolean isAvaible(){
         boolean res = true;

@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -52,22 +51,22 @@ public class ClientThread extends Thread {
             Server.getUserList().addUser(socket, in, out);
             Object obj;
 
-            //boolean parkingChanged = false;
-            
+            //boolean parkingChanged = true;
+            out.writeObject(parking);
+            out.flush();
+            System.out.println("Parking sending");
+
             while (true) {
-                if (parking.isAvaible()) {
-                    out.writeObject(parking);
-                    out.flush();
-                    System.out.println("Parking sending");
-                }
+
                 obj = in.readObject();
                 if (obj != null) {
                     if (obj instanceof ParkingCommand) {
                         ParkingCommand pc = (ParkingCommand) obj;
-                        answPlace = pc.execute();
-                        //parkingChanged = true;
+                        answPlace = pc.execute();                       
+                        parkingChanged(Server.getUserList().getUsers());                        
                         out.writeObject(answPlace);
                         out.flush();
+                        System.out.println("Answer sending");
 
                     }
                 }
@@ -86,11 +85,15 @@ public class ClientThread extends Thread {
                 ex.printStackTrace();
             }
 
-//    private void parkingChanged(ArrayList<User> userList) {
-//        for (User user : userList) {
-//            user.getOut().println("parking changed");
-//            user.getOut().flush();
-//        }
+        }
+    }
+
+    private void parkingChanged(ArrayList<User> userList) throws IOException {
+        for (User user : userList) {
+            user.getOut().reset();
+            user.getOut().writeObject(this.parking);
+            user.getOut().flush();
+            System.out.println("User: " + user.getSocket().toString());
         }
     }
 }

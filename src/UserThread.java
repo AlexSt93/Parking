@@ -35,7 +35,7 @@ public class UserThread extends Thread {
                 System.out.println("1 - Car coming");
                 System.out.println("2 - Car is leaving");
                 System.out.println("3 - Show parking");
-                System.out.println("4 - Exit is coming");
+                System.out.println("4 - Exit");
                 System.out.println("---------");
                 int key = inKey.nextInt();
                 inKey.reset();
@@ -82,6 +82,7 @@ public class UserThread extends Thread {
         } finally {
             try {
                 socket.close();
+                out.close();
 
             } catch (IOException ex) {
                 ex.printStackTrace();
