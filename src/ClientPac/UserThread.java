@@ -1,8 +1,18 @@
+package ClientPac;
+
+
+
+import ParkingPac.SearchCommand;
+import ParkingPac.ParkingCommand;
+import ParkingPac.LeaveCommand;
+import ParkingPac.Place;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
 import static javafx.application.Application.launch;
+
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -64,7 +74,6 @@ public class UserThread extends Thread {
                         ParkingCommand leave = new LeaveCommand(leavePlace, Client.getParking());
                         out.writeObject(leave);
                         out.flush();
-
                         inKey.reset();
                         break;
                     case 3:

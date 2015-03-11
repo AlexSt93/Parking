@@ -1,3 +1,7 @@
+package GUI;
+
+
+
 
 import java.net.Socket;
 import javafx.application.Application;

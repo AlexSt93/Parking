@@ -1,3 +1,10 @@
+package ServerPac;
+
+
+
+import ParkingPac.ParkingCommand;
+import ParkingPac.Place;
+import ParkingPac.Parking;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+
 /*
  * To change this license header, ch
  oose License Headers in Project Properties.
@@ -35,7 +44,6 @@ public class ClientThread extends Thread {
         parking = Parking.getInstance();
         this.start();
     }
-
     public void run() {
 //        BufferedReader in = null;
 //        PrintWriter out = null;
@@ -79,7 +87,7 @@ public class ClientThread extends Thread {
             ex.printStackTrace();
         } finally {
             try {
-                socket.close();
+                //socket.close();
                 in.close();
                 out.close();
             } catch (IOException ex) {

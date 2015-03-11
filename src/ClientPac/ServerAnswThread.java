@@ -1,8 +1,16 @@
+package ClientPac;
+
+
+
+import ParkingPac.Parking;
+import ParkingPac.Place;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,11 +28,9 @@ public class ServerAnswThread extends Thread {
     public ServerAnswThread(Socket socket) {
         this.socket = socket;
         this.start();
-    }
-    
+    }    
     @Override
     public void run() {
-
         ObjectInputStream in = Client.getIn();
        
         try {

@@ -1,3 +1,4 @@
+package ServerPac;
 
 import java.io.*;
 import java.io.BufferedReader;
@@ -31,14 +32,13 @@ import java.util.logging.Logger;
  */
 public class Server {
 
-    static final DBConnection con = DBConnection.getInsance();
+    static final public DBConnection con = DBConnection.getInsance();
     private static final int idPark = 1;
     private static UserList list = new UserList();
 
     public static void main(String[] args) throws IOException, SQLException {
         new Server();
     }
-
     public Server() throws SQLException {
         try {
             ServerSocket socketListener = new ServerSocket(Config.PORT);

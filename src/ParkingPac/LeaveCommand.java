@@ -1,3 +1,5 @@
+package ParkingPac;
+
 
 import java.io.Serializable;
 
@@ -11,23 +13,21 @@ import java.io.Serializable;
  *
  * @author Александр
  */
-public class SearchCommand implements ParkingCommand,Serializable {
+public class LeaveCommand implements ParkingCommand, Serializable{
 
-    private int carSize;
+    private Place place;
     private Parking parking;
-    private String entryPoint;
 
-    public SearchCommand(int carSize, String entryPoint, Parking parking) {
-        this.carSize = carSize;
+    public LeaveCommand(Place place, Parking parking) {
+        this.place = place;
         this.parking = parking;
-        this.entryPoint = entryPoint;
     }
 
     @Override
     public Place execute() {
+        System.out.println("LeaveCommand.EXECUTE");
         Place foundPlace = new Place();
-        System.out.println("SearchCommand.EXECUTE");
-        foundPlace = parking.searchPlace(carSize, entryPoint);
+        foundPlace = parking.carIsLeaving(place);
         return foundPlace;
     }
 

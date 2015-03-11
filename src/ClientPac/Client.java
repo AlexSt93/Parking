@@ -1,3 +1,9 @@
+package ClientPac;
+
+
+
+import ParkingPac.Parking;
+import ServerPac.Config;
 import java.io.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -22,25 +28,8 @@ import javafx.stage.Stage;
  *
  * @author Александр
  */
-public class Client{
+public class Client {
 
-    /**
-     * @return the entryPoint
-     */
-    public static String getEntryPoint() {
-        return entryPoint;
-    }
-
-    /**
-     * @param aEntryPoint the entryPoint to set
-     */
-    public static void setEntryPoint(String aEntryPoint) {
-        entryPoint = aEntryPoint;
-    }
-
-    /**
-     * @param aParking the parking to set
-     */
     private Socket socket;
     private static Thread userThread;
     private static Thread serverAnswThread;
@@ -56,7 +45,6 @@ public class Client{
         this.serverAnswThread = new ServerAnswThread(this.socket);
         this.entryPoint = null;
     }
-
     public static void main(String[] args) throws IOException {
 
         try {
@@ -64,17 +52,12 @@ public class Client{
             Socket s = new Socket("localhost", Config.PORT);//CONNECT TO THE SERVER
             //s.setSoTimeout(10000);
             Client client = new Client(s);//START NEW CLIENT OBJECT
-            
 
         } catch (Exception noServer)//IF DIDNT CONNECT PRINT THAT THEY DIDNT
         {
             System.out.println("The server might not be up at this time.");
             System.out.println("Please try again later.");
-        }finally{
-            in.close();
-            out.close();            
-        }
-        
+        } 
 
     }
 
@@ -145,5 +128,21 @@ public class Client{
         Client.out = out;
     }
 
-    
+    /**
+     * @return the entryPoint
+     */
+    public static String getEntryPoint() {
+        return entryPoint;
+    }
+
+    /**
+     * @param aEntryPoint the entryPoint to set
+     */
+    public static void setEntryPoint(String aEntryPoint) {
+        entryPoint = aEntryPoint;
+    }
+
+    /**
+     * @param aParking the parking to set
+     */
 }

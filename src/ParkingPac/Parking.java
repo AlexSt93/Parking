@@ -1,3 +1,9 @@
+package ParkingPac;
+
+
+
+
+import ServerPac.Server;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,7 +61,6 @@ public class Parking implements Serializable {
         String queryArea = "select * from place order by areaName, placePosition";
         ArrayList<Place> placeList;
         try {
-
             ResultSet rs2 = Server.con.getSt().executeQuery("select max(id) from place");
             rs2.next();
             maxIdPlace = rs2.getInt(1);
