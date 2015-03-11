@@ -31,7 +31,6 @@ import java.util.logging.Logger;
  */
 public class Server {
 
-    public static final int PORT = 8080;
     static final DBConnection con = DBConnection.getInsance();
     private static final int idPark = 1;
     private static UserList list = new UserList();
@@ -42,7 +41,7 @@ public class Server {
 
     public Server() throws SQLException {
         try {
-            ServerSocket socketListener = new ServerSocket(PORT);
+            ServerSocket socketListener = new ServerSocket(Config.PORT);
             while (true) {
                 Socket client = null;
                 client = socketListener.accept();                
@@ -56,6 +55,7 @@ public class Server {
             System.err.println("I/O exception");
             e.printStackTrace();
         }
+        
     }
 
     public synchronized static UserList getUserList() {

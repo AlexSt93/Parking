@@ -54,13 +54,14 @@ public class Client{
         this.in = new ObjectInputStream(socket.getInputStream());
         this.out = new ObjectOutputStream(socket.getOutputStream());
         this.serverAnswThread = new ServerAnswThread(this.socket);
+        this.entryPoint = null;
     }
 
     public static void main(String[] args) throws IOException {
 
         try {
 
-            Socket s = new Socket("localhost", Server.PORT);//CONNECT TO THE SERVER
+            Socket s = new Socket("localhost", Config.PORT);//CONNECT TO THE SERVER
             //s.setSoTimeout(10000);
             Client client = new Client(s);//START NEW CLIENT OBJECT
             
@@ -69,7 +70,11 @@ public class Client{
         {
             System.out.println("The server might not be up at this time.");
             System.out.println("Please try again later.");
+        }finally{
+            in.close();
+            out.close();            
         }
+        
 
     }
 

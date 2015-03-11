@@ -13,12 +13,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 /*
- * To change this license header, choose License Headers in Project Properties.
+ * To change this license header, ch
+ oose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 /**
  *
  * @author Александр
@@ -62,8 +63,8 @@ public class ClientThread extends Thread {
                 if (obj != null) {
                     if (obj instanceof ParkingCommand) {
                         ParkingCommand pc = (ParkingCommand) obj;
-                        answPlace = pc.execute();                       
-                        parkingChanged(Server.getUserList().getUsers());                        
+                        answPlace = pc.execute();
+                        parkingChanged(Server.getUserList().getUsers());
                         out.writeObject(answPlace);
                         out.flush();
                         System.out.println("Answer sending");

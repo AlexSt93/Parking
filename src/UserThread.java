@@ -24,15 +24,18 @@ public class UserThread extends Thread {
         Scanner inKey = new Scanner(System.in);
         String s;
         ObjectOutputStream out = Client.getOut();
-        launch();
+        
 
         try {
             boolean flag = true;
             while (flag) {
-                System.out.println("Input entry point (top/bot):");
-                String entryPoint = inKey.next();                
-                inKey.reset();
 
+                if (Client.getEntryPoint() == null) {
+                    System.out.println("Input entry point (top/bot):");
+                    String entryPoint = inKey.next();
+                    Client.setEntryPoint(entryPoint);
+                    inKey.reset();
+                }
                 System.out.println("Enter number:");
                 System.out.println("1 - Car coming");
                 System.out.println("2 - Car is leaving");
@@ -66,7 +69,7 @@ public class UserThread extends Thread {
                         break;
                     case 3:
                         System.out.println("Parking: ");
-                        Client.getParking().showParking();
+                        Client.getParking().showParking(Client.getEntryPoint());
                         inKey.reset();
                         break;
                     case 4:

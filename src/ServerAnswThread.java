@@ -21,12 +21,12 @@ public class ServerAnswThread extends Thread {
         this.socket = socket;
         this.start();
     }
-
+    
     @Override
     public void run() {
 
         ObjectInputStream in = Client.getIn();
-        
+       
         try {
             while (true) {
                 Object obj = in.readObject();

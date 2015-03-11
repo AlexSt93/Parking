@@ -25,8 +25,7 @@ public class DBConnection {
         try {
 
             Class.forName("com.mysql.jdbc.Driver");
-            String url = "jdbc:mysql://s21/Parking";
-            con = DriverManager.getConnection(url, "Devel", "dev");
+            con = DriverManager.getConnection(Config.URL, Config.LOGIN, Config.PASSWORD);
             System.out.println("Connected to base");
             st = con.createStatement();
         } catch (Exception e) {
