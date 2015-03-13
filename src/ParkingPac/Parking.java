@@ -113,7 +113,7 @@ public class Parking implements Serializable {
 
     public synchronized static Place searchPlace(int carSize, String entryPoint) {
 
-        ArrayList<String> areas = instance.areaList.get(entryPoint);
+        ArrayList<String> areas = instance.getAreaList().get(entryPoint);
         Place place = new Place("!");
         System.out.println(areas);
         for (String a : areas) {
@@ -256,7 +256,7 @@ public class Parking implements Serializable {
     }
 
     public void showParking(String entryPoint) {
-        ArrayList<String> areas = this.areaList.get(entryPoint);
+        ArrayList<String> areas = this.getAreaList().get(entryPoint);
         for (String a : areas) {
             System.out.println("Area " + a + ": ");
             ArrayList<Place> placeList = this.getPlaces().get(a);
@@ -283,5 +283,19 @@ public class Parking implements Serializable {
      */
     public Map<String, ArrayList<Place>> getPlaces() {
         return places;
+    }
+
+    /**
+     * @return the areaList
+     */
+    public Map<String, ArrayList<String>> getAreaList() {
+        return areaList;
+    }
+
+    /**
+     * @param areaList the areaList to set
+     */
+    public void setAreaList(Map<String, ArrayList<String>> areaList) {
+        this.areaList = areaList;
     }
 }

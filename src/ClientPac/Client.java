@@ -1,7 +1,6 @@
 package ClientPac;
 
-
-
+import GUI.*;
 import ParkingPac.Parking;
 import ServerPac.Config;
 import java.io.*;
@@ -37,27 +36,31 @@ public class Client {
     private static ObjectInputStream in;
     private static ObjectOutputStream out;
     private static String entryPoint;
+    private static View view;
 
     public Client(Socket socket) throws IOException {
         this.socket = socket;
         this.in = new ObjectInputStream(socket.getInputStream());
         this.out = new ObjectOutputStream(socket.getOutputStream());
-        this.serverAnswThread = new ServerAnswThread(this.socket);
         this.entryPoint = null;
+        this.view = View.getInstance();
+        this.serverAnswThread = new ServerAnswThread(this.socket);
+        
     }
+
     public static void main(String[] args) throws IOException {
 
         try {
 
-            Socket s = new Socket("localhost", Config.PORT);//CONNECT TO THE SERVER
+            Socket s = new Socket("localhost", Config.PORT);
             //s.setSoTimeout(10000);
-            Client client = new Client(s);//START NEW CLIENT OBJECT
-
-        } catch (Exception noServer)//IF DIDNT CONNECT PRINT THAT THEY DIDNT
-        {
-            System.out.println("The server might not be up at this time.");
-            System.out.println("Please try again later.");
-        } 
+            Client client = new Client(s);
+            Application.launch(View.class);
+        } catch (Exception noServer) {
+            //System.out.println("The server might not be up at this time.");
+            //System.out.println("Please try again later.");
+            noServer.printStackTrace();
+        }
 
     }
 
@@ -142,6 +145,19 @@ public class Client {
         entryPoint = aEntryPoint;
     }
 
+    /**
+     * @return the view
+     */
+    public static View getView() {
+        return view;
+    }
+
+    /**
+     * @param view the view to set
+     */
+    public static void setView(View view) {
+        Client.view = view;
+    }
     /**
      * @param aParking the parking to set
      */
