@@ -72,8 +72,8 @@ public class ClientThread extends Thread {
                     if (obj instanceof ParkingCommand) {
                         ParkingCommand pc = (ParkingCommand) obj;
                         answPlace = pc.execute();
-                        out.writeObject(answPlace);
                         parkingChanged(Server.getUserList().getUsers());
+                        out.writeObject(answPlace);
                         out.flush();
                         System.out.println("Answer sending");
 

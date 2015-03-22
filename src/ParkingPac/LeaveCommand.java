@@ -2,6 +2,8 @@ package ParkingPac;
 
 
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -27,7 +29,11 @@ public class LeaveCommand implements ParkingCommand, Serializable{
     public Place execute() {
         System.out.println("LeaveCommand.EXECUTE");
         Place foundPlace = new Place();
-        foundPlace = parking.carIsLeaving(place);
+        try {
+            foundPlace = parking.carIsLeaving(place);
+        } catch (CloneNotSupportedException ex) {
+            ex.printStackTrace();
+        }
         return foundPlace;
     }
 

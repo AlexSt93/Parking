@@ -1,8 +1,5 @@
 package ParkingPac;
 
-
-
-
 import java.io.Serializable;
 
 /*
@@ -10,12 +7,12 @@ import java.io.Serializable;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Александр
  */
-public class Place implements Serializable {
+public class Place implements Serializable, Cloneable {
+
     private int id;
     private int status; // 0 - free, 1 - reserve
     private String areaName;
@@ -23,31 +20,55 @@ public class Place implements Serializable {
     private int placePosition;
     private int placeSize;
     private int parking_id;
-    public Place(int id, int status, String areaName, int areaRange,  int placeSize, int placePosition, int parking_id){
+
+    public Place(int id, int status, String areaName, int areaRange, int placeSize, int placePosition, int parking_id) {
         this.id = id;
         this.status = status;
         this.areaName = areaName;
-        
+
         this.areaRange = areaRange;
         this.placeSize = placeSize;
         this.placePosition = placePosition;
         this.parking_id = parking_id;
-        
+
     }
+
     @Override
-    public String toString(){
-        String res = "Place: "+this.areaName+" "+this.placePosition;
+    public boolean equals(Object p) {
+        Place place = (Place) p;
+        if (this.getId() == place.getId()) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    @Override
+    public String toString() {
+        String res;
+        if (this.id == 0) {
+            res = "Not found";
+        } else {
+            res = this.areaName + this.placePosition;
+        }
         return res;
     }
-    public Place(String areaName){
+
+    public Place(String areaName) {
         this.id = 0;
         this.areaName = areaName;
     }
-    public Place(){
+
+    public Place() {
         this.id = 0;
-        
+
     }
-    public Place(String areaName, int placePosition){
+
+    public Place(String areaName, int placePosition) {
         this.areaName = areaName;
         this.placePosition = placePosition;
     }
@@ -149,6 +170,5 @@ public class Place implements Serializable {
     public void setParking_id(int parking_id) {
         this.parking_id = parking_id;
     }
-
 
 }

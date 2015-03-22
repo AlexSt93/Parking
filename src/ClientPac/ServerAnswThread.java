@@ -10,6 +10,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
+import javafx.scene.text.TextAlignment;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -25,6 +27,7 @@ public class ServerAnswThread extends Thread {
     private Socket socket;
     private ViewController vContrl;
     private ObjectInputStream in;
+    private Parking parking;
 
     public ServerAnswThread(Socket socket, ViewController vContrl) throws IOException {
         this.socket = socket;
@@ -40,36 +43,46 @@ public class ServerAnswThread extends Thread {
                 Object obj = in.readObject();
                 if (obj != null) {
                     if (obj instanceof Parking) {
-                        Parking parking = (Parking) obj;
-                        vContrl.setParking(parking);
-                        if (vContrl.getEntryPoint() != null) {
-                            vContrl.showParking();
-
-                        }
-
-                    } else if (obj instanceof Place) {
-                        final Place place = (Place) obj;
-                        vContrl.showParking();
+                        parking = (Parking) obj;
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                vContrl.getPlaceScreen().setText(place.toString());
+                                
+                                vContrl.setParking(parking);
+                                if (vContrl.getEntryPoint() != null) {
+                                    vContrl.showParking();
+
+                                }
+                            }
+                        });
+
+                    } else if (obj instanceof Place) {
+                        final Place place = (Place) obj;
+
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                
+                                vContrl.getPlaceScreen().setText(place.toString());  
+                                vContrl.getPlaceScreen().setAlignment(Pos.CENTER);
+                                                              
                                 System.out.println(place.toString());
                             }
                         });
+                        vContrl.showParking();
                     }
                 }
             }
-            }catch (IOException ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
-        }catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
-        }finally {
+        } finally {
             try {
                 in.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
-        }
     }
+}

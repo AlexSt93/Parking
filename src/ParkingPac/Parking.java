@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -108,145 +109,265 @@ public class Parking implements Serializable {
 
     }
 
+//    public synchronized static Place searchPlace(int carSize, String entryPoint) {
+//        ArrayList<String> areas = instance.getAreaList().get(entryPoint);
+//        Place place = new Place("!");
+//        System.out.println(areas);
+//        for (String a : areas) {
+//            String areaName = a;
+//            String[] query = new String[3];
+//            ArrayList<Place> placeList = instance.getPlaces().get(areaName);
+//            if (placeList == null) {
+//                placeList = new ArrayList();
+//            }
+//            int sizeFreePlaces = 0;
+//            int space = 0;
+//            int posForNewPlace = 0;
+//            //Place PrevPlace = new Place(0, 1, areaName, 1, 0, 0, 1);
+//            List<Place> freePlaces = new ArrayList();
+//            for (Place p : placeList) {
+//                int placeStatus = p.getStatus();
+//                int placeSize = p.getPlaceSize();
+//                if (placeStatus == 0) {
+//                    if (freePlaces.size() > 0) {
+//                        if (placeSize + sizeFreePlaces >= carSize) {
+//
+//                            placeList.get(placeList.indexOf(freePlaces.get(0))).setStatus(1);
+//                            placeList.get(placeList.indexOf(freePlaces.get(0))).setPlaceSize(carSize);
+//                            place = freePlaces.get(0); //place = 
+//                            query[0] = "update place "
+//                                    + "set status = 1,"
+//                                    + "placeSize = " + carSize
+//                                    + " where id =" + freePlaces.get(0).getId() + "; ";
+//                            if (freePlaces.size() > 1) {
+//                                placeList.remove(freePlaces.get(1));
+//                                query[1] = "delete from place "
+//                                        + "where id =" + freePlaces.get(1).getId() + "; ";
+//                            }
+//                            if ((sizeFreePlaces + placeSize - carSize) == 0) {
+//                                placeList.remove(p);
+//                                query[2] = "delete from place "
+//                                        + "where id =" + p.getId() + "; ";
+//
+//                            } else {
+//                                p.setPlaceSize(sizeFreePlaces + placeSize - carSize);
+//                                p.setPlacePosition(p.getPlacePosition() + (sizeFreePlaces + placeSize - carSize));
+//                                query[2] = "update place set placeSize =" + p.getPlaceSize()
+//                                        + ", placePosition = " + p.getPlacePosition()
+//                                        + " where id = " + p.getId();
+//                            }
+//                            sizeFreePlaces -= carSize;
+//                            freePlaces.clear();
+//                            break;
+//                        } else {
+//
+//                            freePlaces.add(p);
+//                            sizeFreePlaces += placeSize;
+//                        }
+//                    } else {
+//
+//                        if (placeSize >= carSize) {
+//
+//                            if (placeSize == carSize) {
+//                                p.setStatus(1);
+//                                query[0] = "update place "
+//                                        + "set status = 1 "
+//                                        + "where id =" + p.getId() + "; ";
+//                            } else {
+//                                p.setPlaceSize(carSize);
+//                                p.setStatus(1);
+//                                query[0] = "update place "
+//                                        + "set status = 1, "
+//                                        + "placeSize =" + carSize
+//                                        + " where id =" + p.getId() + "; ";
+//                                Place newPlace = new Place(++instance.maxIdPlace, 0, areaName, 1, placeSize - carSize, p.getPlacePosition() + carSize, 1);
+//                                placeList.add(placeList.indexOf(p) + 1, newPlace);
+//                                //placeList сортировка 
+//                                query[1] = "insert into place values (" + newPlace.getId() + ","
+//                                        + "0,"
+//                                        + "'" + areaName + "'"
+//                                        + ",1,"
+//                                        + newPlace.getPlaceSize() + ","
+//                                        + newPlace.getPlacePosition() + ","
+//                                        + "1); ";
+//                            }
+//                            place = p; //place =
+//                            break;
+//                        } else {
+//                            freePlaces.add(p);
+//                            sizeFreePlaces += placeSize;
+//                        }
+//
+//                    }
+//
+//                } else {
+//                    posForNewPlace = p.getPlacePosition() + placeSize;
+//                }
+//                space += placeSize;
+//            }
+//
+//            if ((space + carSize) <= 24 && place.getId() == 0) {
+//                if (freePlaces.size() > 0) {
+//                    placeList.removeAll(freePlaces);
+//                    freePlaces.clear();
+//                }
+//                Place newPlace = new Place(++instance.maxIdPlace, 1, areaName, 1, carSize, posForNewPlace, 1);
+//                query[0] = "insert into place values (" + newPlace.getId() + ","
+//                        + "1,"
+//                        + "'" + areaName + "'"
+//                        + ",1,"
+//                        + carSize + ","
+//                        + posForNewPlace + ","
+//                        + "1); ";
+//                placeList.add(newPlace);
+//                place = newPlace;
+//            }
+//            if (place.getId() != 0) {
+//                instance.getPlaces().put(areaName, placeList);
+//                instance.parkingChanged(query);
+//                break;
+//
+//            }
+//        }
+//        //places.put(areaName, placeList);
+//        return place;
+//    }
     public synchronized static Place searchPlace(int carSize, String entryPoint) {
-
+        Place foundPlace = new Place();
         ArrayList<String> areas = instance.getAreaList().get(entryPoint);
-        Place place = new Place("!");
-        System.out.println(areas);
         for (String a : areas) {
             String areaName = a;
-            String[] query = new String[3];
             ArrayList<Place> placeList = instance.getPlaces().get(areaName);
             if (placeList == null) {
                 placeList = new ArrayList();
             }
-            int sizeFreePlaces = 0;
+            String[] query = new String[3];
             int space = 0;
-            int posForNewPlace = 0;
-            //Place PrevPlace = new Place(0, 1, areaName, 1, 0, 0, 1);
-            List<Place> freePlaces = new ArrayList();
             for (Place p : placeList) {
-                int placeStatus = p.getStatus();
-                int placeSize = p.getPlaceSize();
-                if (placeStatus == 0) {
-                    if (freePlaces.size() > 0) {
-                        if (placeSize + sizeFreePlaces >= carSize) {
-
-                            placeList.get(placeList.indexOf(freePlaces.get(0))).setStatus(1);
-                            placeList.get(placeList.indexOf(freePlaces.get(0))).setPlaceSize(carSize);
-                            place = freePlaces.get(0); //place = 
-                            query[0] = "update place "
-                                    + "set status = 1,"
-                                    + "placeSize = " + carSize
-                                    + " where id =" + freePlaces.get(0).getId() + "; ";
-                            if (freePlaces.size() > 1) {
-                                placeList.remove(freePlaces.get(1));
-                                query[1] = "delete from place "
-                                        + "where id =" + freePlaces.get(1).getId() + "; ";
-                            }
-                            if ((sizeFreePlaces + placeSize - carSize) == 0) {
-                                placeList.remove(p);
-                                query[2] = "delete from place "
-                                        + "where id =" + p.getId() + "; ";
-
-                            } else {
-                                p.setPlaceSize(sizeFreePlaces + placeSize - carSize);
-                                p.setPlacePosition(p.getPlacePosition() + (sizeFreePlaces + placeSize - carSize));
-                                query[2] = "update place set placeSize =" + p.getPlaceSize()
-                                        + ", placePosition = " + p.getPlacePosition()
-                                        + " where id = " + p.getId();
-                            }
-                            sizeFreePlaces -= carSize;
-                            freePlaces.clear();
+                if (p.getStatus() == 0) {
+                    if (p.getPlaceSize() >= carSize) {
+                        if (p.getPlaceSize() == carSize) {
+                            p.setStatus(1);
+                            query[0] = "update place set status = 1 where id= " + p.getId();
+                            instance.parkingChanged(query);
+                            foundPlace = p;
                             break;
                         } else {
-
-                            freePlaces.add(p);
-                            sizeFreePlaces += placeSize;
-                        }
-                    } else {
-
-                        if (placeSize >= carSize) {
-
-                            if (placeSize == carSize) {
-                                p.setStatus(1);
-                                query[0] = "update place "
-                                        + "set status = 1 "
-                                        + "where id =" + p.getId() + "; ";
-                            } else {
-                                p.setPlaceSize(carSize);
-                                p.setStatus(1);
-                                query[0] = "update place "
-                                        + "set status = 1, "
-                                        + "placeSize =" + carSize
-                                        + " where id =" + p.getId() + "; ";
-                                Place newPlace = new Place(++instance.maxIdPlace, 0, areaName, 1, placeSize - carSize, p.getPlacePosition() + carSize, 1);
-                                placeList.add(placeList.indexOf(p) + 1, newPlace);
-                                //placeList сортировка 
-                                query[1] = "insert into place values (" + newPlace.getId() + ","
-                                        + "0,"
-                                        + "'" + areaName + "'"
-                                        + ",1,"
-                                        + newPlace.getPlaceSize() + ","
-                                        + newPlace.getPlacePosition() + ","
-                                        + "1); ";
-                            }
-                            place = p; //place =
+                            Place newPlace = new Place(++instance.maxIdPlace, 0, areaName, 1, p.getPlaceSize() - carSize, p.getPlacePosition() + carSize, 1);
+                            p.setStatus(1);
+                            p.setPlaceSize(carSize);
+                            query[0] = "update place set status = 1, placeSize = " + carSize + " where id=" + p.getId() + ";";
+                            query[1] = "insert into place values (" + newPlace.getId() + ","
+                                    + "0,"
+                                    + "'" + areaName + "'"
+                                    + ",1,"
+                                    + newPlace.getPlaceSize() + ","
+                                    + newPlace.getPlacePosition() + ","
+                                    + "1);";
+                            placeList.add(placeList.indexOf(p) + 1, newPlace);
+                            foundPlace = p;
                             break;
-                        } else {
-                            freePlaces.add(p);
-                            sizeFreePlaces += placeSize;
                         }
-
                     }
-
                 } else {
-                    posForNewPlace = p.getPlacePosition() + placeSize;
+                    space += p.getPlaceSize();
                 }
-                space += placeSize;
-            }
 
-            if ((space + carSize) <= 24 && place.getId() == 0) {
-                if (freePlaces.size() > 0) {
-                    placeList.removeAll(freePlaces);
-                    freePlaces.clear();
+            }
+            if ((space + carSize) <= 24 && foundPlace.getId() == 0) {
+                int positionForPlace = 0;
+                if (placeList.size() > 0) {
+                    positionForPlace = placeList.get(placeList.size() - 1).getPlacePosition() + placeList.get(placeList.size() - 1).getPlaceSize();
                 }
-                Place newPlace = new Place(++instance.maxIdPlace, 1, areaName, 1, carSize, posForNewPlace, 1);
+                Place newPlace = new Place(++instance.maxIdPlace, 1, areaName, 1, carSize, positionForPlace, 1);
+                placeList.add(newPlace);
+                foundPlace = newPlace;
                 query[0] = "insert into place values (" + newPlace.getId() + ","
                         + "1,"
                         + "'" + areaName + "'"
                         + ",1,"
-                        + carSize + ","
-                        + posForNewPlace + ","
-                        + "1); ";
-                placeList.add(newPlace);
-                place = newPlace;
+                        + newPlace.getPlaceSize() + ","
+                        + newPlace.getPlacePosition() + ","
+                        + "1);";
             }
-            if (place.getId() != 0) {
-                instance.getPlaces().put(areaName, placeList);
+            if (foundPlace.getId() != 0) {
                 instance.parkingChanged(query);
+                instance.getPlaces().put(areaName, placeList);
                 break;
-
             }
+
         }
-        //places.put(areaName, placeList);
-        return place;
+        return foundPlace;
     }
 
-    public synchronized static Place carIsLeaving(Place place) {
-        Place foundPlace = new Place();
-        String[] query = new String[1];
+    public synchronized static Place carIsLeaving(Place place) throws CloneNotSupportedException {
+
         ArrayList<Place> placeList = instance.getPlaces().get(place.getAreaName());
+        int placeIndex = -1;
+        int k = 0;
         for (Place p : placeList) {
-            if (p.getPlacePosition() == place.getPlacePosition()) {
-                p.setStatus(0);
-                query[0] = "update place set status = 0 where id = " + p.getId();
-                instance.parkingChanged(query);
-                foundPlace = p;
-                instance.getPlaces().put(place.getAreaName(), placeList);
+            if (p.getId() == place.getId()) {
+                placeIndex = k;
                 break;
             }
+            k++;
         }
+        ListIterator<Place> itrBack = placeList.listIterator(placeIndex);
+        ListIterator<Place> itrForward = placeList.listIterator(placeIndex);
+        itrForward.next();
+        Place firstPlace = place;
+        Place lastPlace = place;
+        Place foundPlace = new Place();
+        List<Place> freePlaces = new ArrayList<>();
+        freePlaces.add(firstPlace);
+        int indexForPlace = placeIndex;
+        while (itrForward.hasNext()) {
+            Place tmp = itrForward.next();
+            if (tmp.getStatus() == 1) {
+                break;
+            }
+            lastPlace = tmp;
+            freePlaces.add(lastPlace);
+        }
+        while (itrBack.hasPrevious()) {
+            Place tmp = itrBack.previous();
+            if (tmp.getStatus() == 1) {
+                break;
+            }
+            firstPlace = tmp;
+            freePlaces.add(firstPlace);
+            indexForPlace-=1;
+        }
+        
+        String[] query = new String[freePlaces.size() + 1];
+        if (firstPlace.equals(lastPlace)) {
+            firstPlace.setStatus(0);
+            query[0] = "update place set status = 0 where id = " +firstPlace.getId();
+            placeList.set(indexForPlace, firstPlace);
+            foundPlace = firstPlace;
+        } else {
+            Place newPlace = (Place) firstPlace.clone();
+            newPlace.setStatus(0);
+            newPlace.setPlaceSize(lastPlace.getPlacePosition() + lastPlace.getPlaceSize() - firstPlace.getPlacePosition());
+            foundPlace = newPlace;
+            for (int i = 0; i < freePlaces.size(); i++) {
+                query[i] = "delete from place where id = " + freePlaces.get(i).getId();
+                placeList.remove(freePlaces.get(i));
+            }
+            query[freePlaces.size()] = "insert into place values (" + newPlace.getId() + ","
+                    + "0,"
+                    + "'" + newPlace.getAreaName() + "'"
+                    + ",1,"
+                    + newPlace.getPlaceSize() + ","
+                    + newPlace.getPlacePosition() + ","
+                    + "1);";
+            
+            placeList.add(indexForPlace,newPlace);
+
+        }
+        instance.parkingChanged(query);
+        instance.getPlaces().put(place.getAreaName(), placeList);
+        
         return foundPlace;
     }
 

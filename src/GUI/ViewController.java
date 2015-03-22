@@ -83,7 +83,8 @@ public class ViewController implements Initializable {
         try {
             //placeBoxes = new ArrayList<>();
             //viewPanel.setDisable(true);
-            
+            smallCar.setDisable(true);
+            bigCar.setDisable(true);
             instance = this;
             out = new ObjectOutputStream(Client.getSocket().getOutputStream());
             serverAnswThread = new ServerAnswThread(Client.getSocket(), instance);
@@ -111,12 +112,16 @@ public class ViewController implements Initializable {
                         continue;
                     }
                     Rectangle areaBox = null;
-                    if (a.equals("A")) {
-                        areaBox = AreaA;
-                    } else if (a.equals("B")) {
-                        areaBox = AreaB;
-                    } else if (a.equals("C")) {
-                        areaBox = AreaC;
+                    switch (a) {
+                        case "A":
+                            areaBox = AreaA;
+                            break;
+                        case "B":
+                            areaBox = AreaB;
+                            break;
+                        case "C":
+                            areaBox = AreaC;
+                            break;
                     }
                     double areaPositionX = areaBox.getLayoutX()+20;
                     double areaPositionY = areaBox.getLayoutY()+20;
@@ -145,6 +150,8 @@ public class ViewController implements Initializable {
             topPoint.setVisible(false);
             botPoint.setDisable(true);
         }
+        smallCar.setDisable(false);
+        bigCar.setDisable(false);
         showParking();
 
     }

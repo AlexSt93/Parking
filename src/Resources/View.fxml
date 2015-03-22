@@ -38,10 +38,10 @@
          <children>
             <Button fx:id="bigCar" layoutX="13.0" layoutY="22.0" mnemonicParsing="false" onAction="#newCar" prefHeight="45.0" prefWidth="86.0" text="Грузовая" />
             <Button fx:id="smallCar" layoutX="107.0" layoutY="22.0" mnemonicParsing="false" onAction="#newCar" prefHeight="45.0" prefWidth="86.0" text="Легковая" />
-            <Label fx:id="placeScreen" layoutX="67.0" layoutY="114.0" prefHeight="55.0" prefWidth="73.0" textAlignment="CENTER">
+            <Label fx:id="placeScreen" layoutX="28.0" layoutY="114.0" prefHeight="55.0" prefWidth="151.0" textAlignment="CENTER">
                
                <font>
-                  <Font size="15.0" />
+                  <Font size="30.0" />
                </font>
             </Label>
          </children>
