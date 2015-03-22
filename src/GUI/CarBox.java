@@ -44,7 +44,12 @@ public class CarBox extends Pane {
         String borderStyle = "";
         this.setLayoutX(X + place.getPlacePosition() * 25);
         this.setLayoutY(Y);
-        this.setPrefSize(place.getPlaceSize() * 20, 80);
+        int addPlaceSize = 0;
+        int placeSize = place.getPlaceSize();
+        if (placeSize > 3) {
+            addPlaceSize=(placeSize-2)*5;
+        }
+        this.setPrefSize(placeSize * 20 +addPlaceSize, 80);
         if (place.getStatus() == 0) {
             borderStyle = "-fx-border-style: dotted;"
                     + "-fx-border-width: 2;";

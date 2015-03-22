@@ -31,8 +31,8 @@
                   <Font size="38.0" />
                </font>
             </Label>
-            <Rectangle fx:id="topPoint" arcHeight="5.0" arcWidth="5.0" fill="#ff3c1f" height="14.0" layoutX="671.0" layoutY="7.0" onMouseClicked="#selectEntryPoint" stroke="BLACK" strokeType="INSIDE" width="206.0" />
-            <Rectangle fx:id="botPoint" arcHeight="5.0" arcWidth="5.0" fill="#ff3c1f" height="14.0" layoutX="671.0" layoutY="711.0" onMouseClicked="#selectEntryPoint" stroke="BLACK" strokeType="INSIDE" width="206.0" />
+            <Rectangle fx:id="topPoint" arcHeight="5.0" arcWidth="5.0" fill="#cea975" height="14.0" layoutX="671.0" layoutY="7.0" onMouseClicked="#selectEntryPoint" stroke="BLACK" strokeType="INSIDE" width="206.0" />
+            <Rectangle fx:id="botPoint" arcHeight="5.0" arcWidth="5.0" fill="#cea975" height="14.0" layoutX="671.0" layoutY="711.0" onMouseClicked="#selectEntryPoint" stroke="BLACK" strokeType="INSIDE" width="206.0" />
          </children></AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="732.0" prefWidth="283.0">
          <children>
