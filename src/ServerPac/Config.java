@@ -22,6 +22,10 @@ public class Config {
     public static String URL;
     public static String LOGIN;
     public static String PASSWORD;
+    public static int NUMBER_OF_AREAS;
+    public static int SIZE_OF_AREAS;
+    public static int NUMBER_OF_ENTRIES;
+    public static String[] ENTRY_POSITION;
 
     static {
         Properties properties = new Properties();
@@ -35,6 +39,11 @@ public class Config {
             URL = properties.getProperty("URL");
             LOGIN = properties.getProperty("LOGIN");
             PASSWORD = properties.getProperty("PASSWORD");
+            NUMBER_OF_AREAS = Integer.parseInt(properties.getProperty("NUMBER_OF_AREAS"));
+            SIZE_OF_AREAS = Integer.parseInt(properties.getProperty("SIZE_OF_AREAS"));
+            NUMBER_OF_ENTRIES = Integer.parseInt(properties.getProperty("NUMBER_OF_ENTRIES"));
+            ENTRY_POSITION = properties.getProperty("ENTRY_POSITION").split(",");
+
         } catch (FileNotFoundException ex) {
             System.err.println("Properties config file not found");
         } catch (IOException ex) {

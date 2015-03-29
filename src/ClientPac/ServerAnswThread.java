@@ -47,12 +47,10 @@ public class ServerAnswThread extends Thread {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                
                                 vContrl.setParking(parking);
-                                if (vContrl.getEntryPoint() != null) {
-                                    vContrl.showParking();
+                                Object obj = vContrl.getEntryPoint();
+                                vContrl.initializeParking();
 
-                                }
                             }
                         });
 
@@ -62,10 +60,10 @@ public class ServerAnswThread extends Thread {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                
-                                vContrl.getPlaceScreen().setText(place.toString());  
+
+                                vContrl.getPlaceScreen().setText(place.toString());
                                 vContrl.getPlaceScreen().setAlignment(Pos.CENTER);
-                                                              
+
                                 System.out.println(place.toString());
                             }
                         });

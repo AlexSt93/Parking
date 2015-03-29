@@ -27,6 +27,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -36,6 +38,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
 /**
  *
@@ -46,34 +50,26 @@ public class ViewController implements Initializable {
     /**
      * @return the parking
      */
-    
-
-    @FXML
-    private Rectangle AreaA;
-    @FXML
-    private Rectangle AreaB;
-    @FXML
-    private Rectangle AreaC;
-    @FXML
-    private Rectangle topPoint;
-    @FXML
-    private Rectangle botPoint;
     @FXML
     private Button bigCar;
     @FXML
     private Button smallCar;
     @FXML
     private Label placeScreen;
+    @FXML
+    private ScrollPane scrollPane;
+   
 
     @FXML
     private AnchorPane viewPane;
-    
 
     private Parking parking;
     private ObjectOutputStream out;
     //private String entryPoint;
     //private List<Rectangle> placeBoxes;
     private ObservableList<Pane> placeBoxes = FXCollections.observableArrayList();
+    private ObservableList<AreaPane> areaPanes = FXCollections.observableArrayList();
+    private ObservableList<EntryBox> entryBoxes = FXCollections.observableArrayList();
     private Thread serverAnswThread;
     private String entryPoint;
     private static ViewController instance;
@@ -81,17 +77,60 @@ public class ViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            //placeBoxes = new ArrayList<>();
-            //viewPanel.setDisable(true);
-            smallCar.setDisable(true);
-            bigCar.setDisable(true);
+            getSmallCar().setDisable(true);
+            getBigCar().setDisable(true);
+            scrollPane.setContent(viewPane);
             instance = this;
+            entryPoint = null;
             out = new ObjectOutputStream(Client.getSocket().getOutputStream());
             serverAnswThread = new ServerAnswThread(Client.getSocket(), instance);
-            entryPoint = null;
+
             //viewPanel.setDisable(false);
         } catch (IOException ex) {
             ex.printStackTrace();
+        }
+
+    }
+
+    public void initializeParking() {
+
+        if (areaPanes.isEmpty() && entryBoxes.isEmpty()) {
+            int i = 0;
+            double sizeViewPane = 0;
+            int sizeOfAreas = parking.getSizeOfAreas()*27;
+            for (String str : parking.getAreas()) {
+                //System.out.println(parking.getSizeOfAreas()*27);
+                AreaPane areaPane = new AreaPane(str);
+                areaPane.setLayoutY(90 + 160 * i++);
+                areaPane.setPrefWidth(sizeOfAreas);
+                sizeViewPane = areaPane.getLayoutY();
+                Label areaLabel = new Label(str);
+                areaLabel.setLayoutX(areaPane.getLayoutX()+areaPane.getPrefWidth()+20);
+                areaLabel.setLayoutY(areaPane.getLayoutY()+40);
+                areaLabel.setPrefHeight(40);
+                areaLabel.setPrefWidth(40);
+                areaLabel.setTextAlignment(TextAlignment.CENTER);
+                areaLabel.setFont(Font.font(25));
+                areaLabel.setTextFill(Paint.valueOf("#4a7aa4"));
+                viewPane.getChildren().add(areaLabel);
+                areaPanes.add(areaPane);
+
+            }
+            for (String str : parking.getEntryPosition()) {
+                EntryBox entryBox = new EntryBox(str, this);
+                entryBox.setLayoutY(areaPanes.get(areaPanes.indexOf(new AreaPane(str))).getLayoutY());
+                entryBoxes.add(entryBox);
+
+            }
+            viewPane.getChildren().addAll(areaPanes);
+            viewPane.getChildren().addAll(entryBoxes);
+            viewPane.setPrefHeight(sizeViewPane+250);
+            viewPane.setPrefWidth(sizeOfAreas+90);
+            
+        }
+        
+        if (entryPoint != null) {
+            showParking();
         }
 
     }
@@ -103,65 +142,36 @@ public class ViewController implements Initializable {
 
                 //viewPane.getChildren().add(new Rectangle(100, 100));        
                 viewPane.getChildren().removeAll(placeBoxes);
-                placeBoxes.clear();                
-                ArrayList<String> areas = getParking().getAreaList().get(entryPoint);
+                placeBoxes.clear();
+                //ArrayList<String> areas = getParking().getAreaPositions().get(entryPoint);
 
-                for (String a : areas) {
-                    ArrayList<Place> places = getParking().getPlaces().get(a);
+                for (AreaPane apane : areaPanes) {
+                    ArrayList<Place> places = getParking().getPlaces().get(apane.getName());
                     if (places == null) {
                         continue;
                     }
-                    Rectangle areaBox = null;
-                    switch (a) {
-                        case "A":
-                            areaBox = AreaA;
-                            break;
-                        case "B":
-                            areaBox = AreaB;
-                            break;
-                        case "C":
-                            areaBox = AreaC;
-                            break;
-                    }
-                    double areaPositionX = areaBox.getLayoutX()+20;
-                    double areaPositionY = areaBox.getLayoutY()+20;
+                    double areaPositionX = apane.getLayoutX() + 20;
+                    double areaPositionY = apane.getLayoutY() + 20;
                     for (Place p : places) {
-                        Pane carBox = new CarBox(instance,p,areaPositionX , areaPositionY);
+                        Pane carBox = new CarBox(instance, p, areaPositionX, areaPositionY);
                         //Rectangle box = new Rectangle(20 + areaPositionX + (25 * position), areaPositionY + 20, p.getPlaceSize() * 20, 80);
-                        
+
                         placeBoxes.add(carBox);
                     }
 
                 }
                 viewPane.getChildren().addAll(placeBoxes);
-               
+
             }
         });
     }
 
     @FXML
-    private void selectEntryPoint(MouseEvent event) {
-        if (event.getTarget().equals(topPoint)) {
-            entryPoint = "top";
-            botPoint.setVisible(false);
-            topPoint.setDisable(true);
-        } else if (event.getTarget().equals(botPoint)) {
-            entryPoint = "bot";
-            topPoint.setVisible(false);
-            botPoint.setDisable(true);
-        }
-        smallCar.setDisable(false);
-        bigCar.setDisable(false);
-        showParking();
-
-    }
-
-    @FXML
     private void newCar(ActionEvent event) throws IOException {
         int carSize = 0;
-        if (event.getTarget().equals(bigCar)) {
+        if (event.getTarget().equals(getBigCar())) {
             carSize = 3;
-        } else if (event.getTarget().equals(smallCar)) {
+        } else if (event.getTarget().equals(getSmallCar())) {
             carSize = 2;
         }
         ParkingCommand search = new SearchCommand(carSize, entryPoint, getParking());
@@ -190,6 +200,7 @@ public class ViewController implements Initializable {
     public void setPlaceScreen(Label placeScreen) {
         this.placeScreen = placeScreen;
     }
+
     public Parking getParking() {
         return parking;
     }
@@ -199,5 +210,37 @@ public class ViewController implements Initializable {
      */
     public ObjectOutputStream getOut() {
         return out;
+    }
+
+    /**
+     * @return the areaPanes
+     */
+    public ObservableList<AreaPane> getAreaPanes() {
+        return areaPanes;
+    }
+
+    /**
+     * @return the entryBoxes
+     */
+    public ObservableList<EntryBox> getEntryBoxes() {
+        return entryBoxes;
+    }
+
+    void setEntryPoint(String name) {
+        this.entryPoint = name;
+    }
+
+    /**
+     * @return the bigCar
+     */
+    public Button getBigCar() {
+        return bigCar;
+    }
+
+    /**
+     * @return the smallCar
+     */
+    public Button getSmallCar() {
+        return smallCar;
     }
 }

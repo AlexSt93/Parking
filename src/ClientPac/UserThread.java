@@ -78,7 +78,7 @@ public class UserThread extends Thread {
                         break;
                     case 3:
                         System.out.println("Parking: ");
-                        Client.getParking().showParking(Client.getEntryPoint());
+                        //Client.getParking().showParking(Client.getEntryPoint());
                         inKey.reset();
                         break;
                     case 4:

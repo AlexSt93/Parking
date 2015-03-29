@@ -1,12 +1,13 @@
 package ParkingPac;
 
-import ServerPac.Server;
+import ServerPac.*;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -28,29 +29,31 @@ public class Parking implements Serializable {
     private int idPark = 1;
 
     private Map<String, ArrayList<Place>> places;
+    private int numberOfAreas;
+    private int numberOfEntries;
+    private int sizeOfAreas;
+    private String[] entryPosition;
+    private List areas;
     private String adress;
     private int capacity;
     private int maxIdPlace;
-    private Map<String, ArrayList<String>> areaList;
+    private Map<String, ArrayList<String>> areaPositions;
     //static final DBConnection con = DBConnection.getInsance();
 
     private static Parking instance;
 
     public Parking() {
         this.places = getPlacesFromDB();
-        ArrayList<String> listTop = new ArrayList<>();
-        listTop.add("A");
-        listTop.add("B");
-        listTop.add("C");
-
-        ArrayList<String> listBot = new ArrayList<>();
-        listBot.add("C");
-        listBot.add("B");
-        listBot.add("A");
-
-        areaList = new HashMap();
-        this.areaList.put("top", listTop);
-        this.areaList.put("bot", listBot);
+        this.numberOfAreas = ServerPac.Config.NUMBER_OF_AREAS;
+        this.entryPosition = ServerPac.Config.ENTRY_POSITION;
+        this.sizeOfAreas = ServerPac.Config.SIZE_OF_AREAS;
+        this.areas = createAreaList(numberOfAreas);
+        ArrayList<String> areaList;
+        areaPositions = new HashMap();
+        for (int i = 0; i < entryPosition.length; i++) {
+            areaList = entryAreaList(entryPosition[i]);
+            areaPositions.put(entryPosition[i], areaList);
+        }
     }
 
     private Map<String, ArrayList<Place>> getPlacesFromDB() {
@@ -109,132 +112,9 @@ public class Parking implements Serializable {
 
     }
 
-//    public synchronized static Place searchPlace(int carSize, String entryPoint) {
-//        ArrayList<String> areas = instance.getAreaList().get(entryPoint);
-//        Place place = new Place("!");
-//        System.out.println(areas);
-//        for (String a : areas) {
-//            String areaName = a;
-//            String[] query = new String[3];
-//            ArrayList<Place> placeList = instance.getPlaces().get(areaName);
-//            if (placeList == null) {
-//                placeList = new ArrayList();
-//            }
-//            int sizeFreePlaces = 0;
-//            int space = 0;
-//            int posForNewPlace = 0;
-//            //Place PrevPlace = new Place(0, 1, areaName, 1, 0, 0, 1);
-//            List<Place> freePlaces = new ArrayList();
-//            for (Place p : placeList) {
-//                int placeStatus = p.getStatus();
-//                int placeSize = p.getPlaceSize();
-//                if (placeStatus == 0) {
-//                    if (freePlaces.size() > 0) {
-//                        if (placeSize + sizeFreePlaces >= carSize) {
-//
-//                            placeList.get(placeList.indexOf(freePlaces.get(0))).setStatus(1);
-//                            placeList.get(placeList.indexOf(freePlaces.get(0))).setPlaceSize(carSize);
-//                            place = freePlaces.get(0); //place = 
-//                            query[0] = "update place "
-//                                    + "set status = 1,"
-//                                    + "placeSize = " + carSize
-//                                    + " where id =" + freePlaces.get(0).getId() + "; ";
-//                            if (freePlaces.size() > 1) {
-//                                placeList.remove(freePlaces.get(1));
-//                                query[1] = "delete from place "
-//                                        + "where id =" + freePlaces.get(1).getId() + "; ";
-//                            }
-//                            if ((sizeFreePlaces + placeSize - carSize) == 0) {
-//                                placeList.remove(p);
-//                                query[2] = "delete from place "
-//                                        + "where id =" + p.getId() + "; ";
-//
-//                            } else {
-//                                p.setPlaceSize(sizeFreePlaces + placeSize - carSize);
-//                                p.setPlacePosition(p.getPlacePosition() + (sizeFreePlaces + placeSize - carSize));
-//                                query[2] = "update place set placeSize =" + p.getPlaceSize()
-//                                        + ", placePosition = " + p.getPlacePosition()
-//                                        + " where id = " + p.getId();
-//                            }
-//                            sizeFreePlaces -= carSize;
-//                            freePlaces.clear();
-//                            break;
-//                        } else {
-//
-//                            freePlaces.add(p);
-//                            sizeFreePlaces += placeSize;
-//                        }
-//                    } else {
-//
-//                        if (placeSize >= carSize) {
-//
-//                            if (placeSize == carSize) {
-//                                p.setStatus(1);
-//                                query[0] = "update place "
-//                                        + "set status = 1 "
-//                                        + "where id =" + p.getId() + "; ";
-//                            } else {
-//                                p.setPlaceSize(carSize);
-//                                p.setStatus(1);
-//                                query[0] = "update place "
-//                                        + "set status = 1, "
-//                                        + "placeSize =" + carSize
-//                                        + " where id =" + p.getId() + "; ";
-//                                Place newPlace = new Place(++instance.maxIdPlace, 0, areaName, 1, placeSize - carSize, p.getPlacePosition() + carSize, 1);
-//                                placeList.add(placeList.indexOf(p) + 1, newPlace);
-//                                //placeList сортировка 
-//                                query[1] = "insert into place values (" + newPlace.getId() + ","
-//                                        + "0,"
-//                                        + "'" + areaName + "'"
-//                                        + ",1,"
-//                                        + newPlace.getPlaceSize() + ","
-//                                        + newPlace.getPlacePosition() + ","
-//                                        + "1); ";
-//                            }
-//                            place = p; //place =
-//                            break;
-//                        } else {
-//                            freePlaces.add(p);
-//                            sizeFreePlaces += placeSize;
-//                        }
-//
-//                    }
-//
-//                } else {
-//                    posForNewPlace = p.getPlacePosition() + placeSize;
-//                }
-//                space += placeSize;
-//            }
-//
-//            if ((space + carSize) <= 24 && place.getId() == 0) {
-//                if (freePlaces.size() > 0) {
-//                    placeList.removeAll(freePlaces);
-//                    freePlaces.clear();
-//                }
-//                Place newPlace = new Place(++instance.maxIdPlace, 1, areaName, 1, carSize, posForNewPlace, 1);
-//                query[0] = "insert into place values (" + newPlace.getId() + ","
-//                        + "1,"
-//                        + "'" + areaName + "'"
-//                        + ",1,"
-//                        + carSize + ","
-//                        + posForNewPlace + ","
-//                        + "1); ";
-//                placeList.add(newPlace);
-//                place = newPlace;
-//            }
-//            if (place.getId() != 0) {
-//                instance.getPlaces().put(areaName, placeList);
-//                instance.parkingChanged(query);
-//                break;
-//
-//            }
-//        }
-//        //places.put(areaName, placeList);
-//        return place;
-//    }
     public synchronized static Place searchPlace(int carSize, String entryPoint) {
         Place foundPlace = new Place();
-        ArrayList<String> areas = instance.getAreaList().get(entryPoint);
+        ArrayList<String> areas = instance.getAreaPositions().get(entryPoint);
         for (String a : areas) {
             String areaName = a;
             ArrayList<Place> placeList = instance.getPlaces().get(areaName);
@@ -243,7 +123,8 @@ public class Parking implements Serializable {
             }
             String[] query = new String[3];
             int space = 0;
-            for (Place p : placeList) {
+            for (Iterator<Place> it = placeList.iterator(); it.hasNext();) {
+                Place p = it.next();
                 if (p.getStatus() == 0) {
                     if (p.getPlaceSize() >= carSize) {
                         if (p.getPlaceSize() == carSize) {
@@ -268,13 +149,20 @@ public class Parking implements Serializable {
                             foundPlace = p;
                             break;
                         }
+                    } else if (!it.hasNext() && carSize+space<= instance.sizeOfAreas) {
+                        p.setStatus(1);
+                        p.setPlaceSize(carSize);
+                        foundPlace = p;
+                        query[0] = "update place set status =1, placeSize = "+carSize+" where id ="+p.getId();
+                        instance.parkingChanged(query);
+                        break;
                     }
+
                 } else {
                     space += p.getPlaceSize();
                 }
-
             }
-            if ((space + carSize) <= 24 && foundPlace.getId() == 0) {
+            if ((space + carSize) <= instance.sizeOfAreas && foundPlace.getId() == 0) {
                 int positionForPlace = 0;
                 if (placeList.size() > 0) {
                     positionForPlace = placeList.get(placeList.size() - 1).getPlacePosition() + placeList.get(placeList.size() - 1).getPlaceSize();
@@ -336,13 +224,13 @@ public class Parking implements Serializable {
             }
             firstPlace = tmp;
             freePlaces.add(firstPlace);
-            indexForPlace-=1;
+            indexForPlace -= 1;
         }
-        
+
         String[] query = new String[freePlaces.size() + 1];
         if (firstPlace.equals(lastPlace)) {
             firstPlace.setStatus(0);
-            query[0] = "update place set status = 0 where id = " +firstPlace.getId();
+            query[0] = "update place set status = 0 where id = " + firstPlace.getId();
             placeList.set(indexForPlace, firstPlace);
             foundPlace = firstPlace;
         } else {
@@ -361,13 +249,13 @@ public class Parking implements Serializable {
                     + newPlace.getPlaceSize() + ","
                     + newPlace.getPlacePosition() + ","
                     + "1);";
-            
-            placeList.add(indexForPlace,newPlace);
+
+            placeList.add(indexForPlace, newPlace);
 
         }
         instance.parkingChanged(query);
         instance.getPlaces().put(place.getAreaName(), placeList);
-        
+
         return foundPlace;
     }
 
@@ -378,21 +266,20 @@ public class Parking implements Serializable {
         return instance;
     }
 
-    public void showParking(String entryPoint) {
-        ArrayList<String> areas = this.getAreaList().get(entryPoint);
-        for (String a : areas) {
-            System.out.println("Area " + a + ": ");
-            ArrayList<Place> placeList = this.getPlaces().get(a);
-            if (placeList == null) {
-                continue;
-            }
-            for (Place p : placeList) {
-                System.out.print(" |" + p.getAreaName() + p.getPlacePosition() + " " + p.getPlaceSize() + "(" + p.getStatus() + ")| ");
-            }
-            System.out.println("\n");
-        }
-    }
-
+//    public void showParking(String entryPoint) {
+//        ArrayList<String> areas = this.getAreaList().get(entryPoint);
+//        for (String a : areas) {
+//            System.out.println("Area " + a + ": ");
+//            ArrayList<Place> placeList = this.getPlaces().get(a);
+//            if (placeList == null) {
+//                continue;
+//            }
+//            for (Place p : placeList) {
+//                System.out.print(" |" + p.getAreaName() + p.getPlacePosition() + " " + p.getPlaceSize() + "(" + p.getStatus() + ")| ");
+//            }
+//            System.out.println("\n");
+//        }
+//    }
     public boolean isAvaible() {
         boolean res = true;
         if (getPlaces() == null) {
@@ -411,14 +298,136 @@ public class Parking implements Serializable {
     /**
      * @return the areaList
      */
-    public Map<String, ArrayList<String>> getAreaList() {
+//    public Map<String, ArrayList<String>> getAreaList() {
+//        return areaList;
+//    }
+//
+//    /**
+//     * @param areaList the areaList to set
+//     */
+//    public void setAreaList(Map<String, ArrayList<String>> areaList) {
+//        this.areaList = areaList;
+//    }
+    private List createAreaList(int numberOfAreas) {
+        List areaList = new ArrayList(numberOfAreas);
+        if (numberOfAreas > 26) {
+            char tier = 'A';
+            char ch = 'A';
+            for (int i = 0; i < numberOfAreas; i++) {
+                if (ch > 'Z') {
+                    tier++;
+                    ch = 'A';
+                }
+                areaList.add("" + tier + ch);
+                ch++;
+            }
+        } else {
+            for (char ch = 'A'; ch < 'A' + numberOfAreas; ch++) {
+                areaList.add("" + ch);
+            }
+        }
+
         return areaList;
     }
 
-    /**
-     * @param areaList the areaList to set
-     */
-    public void setAreaList(Map<String, ArrayList<String>> areaList) {
-        this.areaList = areaList;
+    private ArrayList entryAreaList(String entryPosition) {
+        ArrayList list = new ArrayList<>();
+        int position = getAreas().indexOf(entryPosition);
+        ListIterator itr1 = getAreas().listIterator(position);
+        ListIterator itr2 = getAreas().listIterator(position);
+        while (itr1.hasPrevious() || itr2.hasNext()) {
+            if (itr2.hasNext()) {
+                list.add(itr2.next());
+            }
+            if (itr1.hasPrevious()) {
+                list.add(itr1.previous());
+            }
+        }
+        return list;
     }
+
+    /**
+     * @return the numberOfAreas
+     */
+    public int getNumberOfAreas() {
+        return numberOfAreas;
+    }
+
+    /**
+     * @param numberOfAreas the numberOfAreas to set
+     */
+    public void setNumberOfAreas(int numberOfAreas) {
+        this.numberOfAreas = numberOfAreas;
+    }
+
+    /**
+     * @return the numberOfEntries
+     */
+    public int getNumberOfEntries() {
+        return numberOfEntries;
+    }
+
+    /**
+     * @param numberOfEntries the numberOfEntries to set
+     */
+    public void setNumberOfEntries(int numberOfEntries) {
+        this.numberOfEntries = numberOfEntries;
+    }
+
+    /**
+     * @return the entryPosition
+     */
+    public String[] getEntryPosition() {
+        return entryPosition;
+    }
+
+    /**
+     * @param entryPosition the entryPosition to set
+     */
+    public void setEntryPosition(String[] entryPosition) {
+        this.entryPosition = entryPosition;
+    }
+
+    /**
+     * @return the areas
+     */
+    public List<String> getAreas() {
+        return areas;
+    }
+
+    /**
+     * @param areas the areas to set
+     */
+    public void setAreas(List areas) {
+        this.areas = areas;
+    }
+
+    /**
+     * @return the areaPositions
+     */
+    public Map<String, ArrayList<String>> getAreaPositions() {
+        return areaPositions;
+    }
+
+    /**
+     * @param areaPositions the areaPositions to set
+     */
+    public void setAreaPositions(Map<String, ArrayList<String>> areaPositions) {
+        this.areaPositions = areaPositions;
+    }
+
+    /**
+     * @return the sizeOfAreas
+     */
+    public int getSizeOfAreas() {
+        return sizeOfAreas;
+    }
+
+    /**
+     * @param aSizeOfAreas the sizeOfAreas to set
+     */
+    public void setSizeOfAreas(int aSizeOfAreas) {
+        sizeOfAreas = aSizeOfAreas;
+    }
+
 }

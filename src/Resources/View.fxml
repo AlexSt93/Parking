@@ -9,32 +9,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<SplitPane dividerPositions="0.8091324200913242" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="734.0" prefWidth="1097.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.ViewController">
+<SplitPane dividerPositions="0.7963470319634703" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="734.0" prefWidth="1097.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.ViewController">
   <items>
-    <AnchorPane fx:id="viewPane" minHeight="0.0" minWidth="0.0" prefHeight="732.0" prefWidth="755.0">
-         <children>
-            <Rectangle fx:id="AreaA" arcHeight="5.0" arcWidth="5.0" fill="#d2e9ff" height="122.0" layoutX="14.0" layoutY="91.0" stroke="BLACK" strokeType="INSIDE" width="638.0" />
-            <Rectangle fx:id="AreaB" arcHeight="5.0" arcWidth="5.0" fill="#dfffb1" height="122.0" layoutX="14.0" layoutY="289.0" stroke="BLACK" strokeType="INSIDE" width="638.0" />
-            <Rectangle fx:id="AreaC" arcHeight="5.0" arcWidth="5.0" fill="#ffba92" height="122.0" layoutX="14.0" layoutY="487.0" stroke="BLACK" strokeType="INSIDE" width="638.0" />
-            <Label layoutX="671.0" layoutY="125.0" prefHeight="44.0" prefWidth="47.0" text="A" textAlignment="JUSTIFY">
-               <font>
-                  <Font size="38.0" />
-               </font>
-            </Label>
-            <Label layoutX="671.0" layoutY="323.0" prefHeight="44.0" prefWidth="47.0" text="B" textAlignment="JUSTIFY">
-               <font>
-                  <Font size="38.0" />
-               </font>
-            </Label>
-            <Label layoutX="671.0" layoutY="521.0" prefHeight="44.0" prefWidth="47.0" text="C" textAlignment="JUSTIFY">
-               <font>
-                  <Font size="38.0" />
-               </font>
-            </Label>
-            <Rectangle fx:id="topPoint" arcHeight="5.0" arcWidth="5.0" fill="#cea975" height="14.0" layoutX="671.0" layoutY="7.0" onMouseClicked="#selectEntryPoint" stroke="BLACK" strokeType="INSIDE" width="206.0" />
-            <Rectangle fx:id="botPoint" arcHeight="5.0" arcWidth="5.0" fill="#cea975" height="14.0" layoutX="671.0" layoutY="711.0" onMouseClicked="#selectEntryPoint" stroke="BLACK" strokeType="INSIDE" width="206.0" />
-         </children></AnchorPane>
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="732.0" prefWidth="283.0">
+      <ScrollPane fx:id="scrollPane" pannable="true" prefViewportHeight="732.0" prefViewportWidth="879.0">
+         <content>
+          <AnchorPane fx:id="viewPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="731.0" prefWidth="867.0" />
+         </content>
+      </ScrollPane>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="732.0" prefWidth="221.0">
          <children>
             <Button fx:id="bigCar" layoutX="13.0" layoutY="22.0" mnemonicParsing="false" onAction="#newCar" prefHeight="45.0" prefWidth="86.0" text="Грузовая" />
             <Button fx:id="smallCar" layoutX="107.0" layoutY="22.0" mnemonicParsing="false" onAction="#newCar" prefHeight="45.0" prefWidth="86.0" text="Легковая" />

@@ -1,6 +1,9 @@
 package GUI;
 
+import java.io.IOException;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,11 +24,15 @@ public class View extends Application {
     private static View instance;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/Resources/View.fxml"));
-        primaryStage.setTitle("Parking");
-        primaryStage.setScene(new Scene(root, primaryStage.getWidth(), primaryStage.getHeight()));
-        primaryStage.show();
+    public void start(Stage primaryStage){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/Resources/View.fxml"));
+            primaryStage.setTitle("Parking");
+            primaryStage.setScene(new Scene(root, primaryStage.getWidth(), primaryStage.getHeight()));
+            primaryStage.show();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static View getInstance() {
