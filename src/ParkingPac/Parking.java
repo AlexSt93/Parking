@@ -44,9 +44,9 @@ public class Parking implements Serializable {
 
     public Parking() {
         this.places = getPlacesFromDB();
-        this.numberOfAreas = ServerPac.Config.NUMBER_OF_AREAS;
-        this.entryPosition = ServerPac.Config.ENTRY_POSITION;
-        this.sizeOfAreas = ServerPac.Config.SIZE_OF_AREAS;
+        this.numberOfAreas = Resources.Config.NUMBER_OF_AREAS;
+        this.entryPosition = Resources.Config.ENTRY_POSITION;
+        this.sizeOfAreas = Resources.Config.SIZE_OF_AREAS;
         this.areas = createAreaList(numberOfAreas);
         ArrayList<String> areaList;
         areaPositions = new HashMap();
@@ -158,9 +158,9 @@ public class Parking implements Serializable {
                         break;
                     }
 
-                } else {
+                } 
                     space += p.getPlaceSize();
-                }
+                
             }
             if ((space + carSize) <= instance.sizeOfAreas && foundPlace.getId() == 0) {
                 int positionForPlace = 0;

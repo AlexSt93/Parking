@@ -1,5 +1,6 @@
 package ServerPac;
 
+import Resources.Config;
 import java.io.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -32,14 +33,22 @@ import java.util.logging.Logger;
  */
 public class Server {
 
-    static final public DBConnection con = DBConnection.getInsance();
+    static public DBConnection con;
     private static final int idPark = 1;
     private static UserList list = new UserList();
+    private static Config config;
 
     public static void main(String[] args) throws IOException, SQLException {
-        new Server();
+        new Server(args);
     }
-    public Server() throws SQLException {
+    public Server(String[] args) throws SQLException {
+        this.config = Config.getInstance();
+        if (args.length>0){
+        	config.initialize(args[0]);
+        }
+        
+        this.con =  DBConnection.getInsance();
+        
         try {
             ServerSocket socketListener = new ServerSocket(Config.PORT);
             while (true) {
@@ -60,5 +69,5 @@ public class Server {
 
     public synchronized static UserList getUserList() {
         return list;
-    }
+    }    
 }

@@ -2,7 +2,7 @@ package ClientPac;
 
 import GUI.*;
 import ParkingPac.Parking;
-import ServerPac.Config;
+import Resources.Config;
 import java.io.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -37,23 +37,29 @@ public class Client {
     private static ObjectOutputStream out;
     private static String entryPoint;
     private static ViewController vContrl;
+  
 
     public Client(Socket socket) throws IOException {
         this.socket = socket;
+             
     }
 
     public static void main(String[] args) throws IOException {
 
         try {
-
-            Socket s = new Socket("localhost", Config.PORT);
+        	Config config = Config.getInstance();
+        	if (args.length>0){
+            	config.initialize(args[0]);
+            }
+            Socket s = new Socket("localhost", config.PORT);
             //s.setSoTimeout(10000);
             Client client = new Client(s);
             Application.launch(View.class);
 
         } catch (Exception noServer) {
-            System.out.println("The server might not be up at this time.");
-            System.out.println("Please try again later.");
+        	noServer.printStackTrace();
+//            System.out.println("The server might not be up at this time.");
+//            System.out.println("Please try again later.");
         }
 
     }

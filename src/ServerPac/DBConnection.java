@@ -1,5 +1,7 @@
 package ServerPac;
 
+import Resources.Config;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -22,11 +24,12 @@ public class DBConnection {
 
     protected DBConnection() {
         
-        
+        Config config = Config.getInstance();
+       
         try {
 
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection(Config.URL, Config.LOGIN, Config.PASSWORD);
+            con = DriverManager.getConnection(config.URL, config.LOGIN, config.PASSWORD);
             System.out.println("Connected to base");
             st = con.createStatement();
         } catch (Exception e) {

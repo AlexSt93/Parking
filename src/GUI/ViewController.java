@@ -110,7 +110,7 @@ public class ViewController implements Initializable {
                 areaLabel.setPrefHeight(40);
                 areaLabel.setPrefWidth(40);
                 areaLabel.setTextAlignment(TextAlignment.CENTER);
-                areaLabel.setFont(Font.font(25));
+                areaLabel.setFont(Font.font(str,25));
                 areaLabel.setTextFill(Paint.valueOf("#4a7aa4"));
                 viewPane.getChildren().add(areaLabel);
                 areaPanes.add(areaPane);

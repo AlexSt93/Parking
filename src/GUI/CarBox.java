@@ -17,7 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
+//import javafx.scene.layout.Border;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Polygon;
 
@@ -51,10 +51,12 @@ public class CarBox extends Pane {
         }
         this.setPrefSize(placeSize * 20 +addPlaceSize, 80);
         if (place.getStatus() == 0) {
-            borderStyle = "-fx-border-style: dotted;"
+            borderStyle = "-fx-border-color: black;"
+            		+ "-fx-border-style: dotted;"
                     + "-fx-border-width: 2;";
         } else if (place.getStatus() == 1) {
-            borderStyle = "-fx-border-style: solid;"
+            borderStyle = "-fx-border-color: black;" 
+            		+ "-fx-border-style: solid;"
                     + "-fx-border-width: 1;";
             this.delBut = new Button("X");
             this.delBut.setLayoutX(this.getPrefWidth() / 2 - 12);
